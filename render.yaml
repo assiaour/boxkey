@@ -12,3 +12,5 @@ services:
         value: 10000
       - key: MONGODB_URI
         value: mongodb+srv://ouriemchiassia0202:assia@boxkey.cumi44c.mongodb.net/box-key?retryWrites=true&w=majority
+      - key: CORS_ORIGIN
+        value: "*"
