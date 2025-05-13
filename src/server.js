@@ -15,7 +15,12 @@ app.use(cors({
 app.use(express.json());
 
 // Connect to MongoDB Atlas
-const mongoUri = process.env.MONGODB_URI || 'mongodb+srv://ouriemchiassia0202:ouriemchiassia0202@box-key.edzawt3.mongodb.net/box-key?retryWrites=true&w=majority';
+const mongoUri = process.env.MONGODB_URI;
+if (!mongoUri) {
+  console.error('MONGODB_URI environment variable is not set');
+  process.exit(1);
+}
+
 mongoose.connect(mongoUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -96,6 +101,24 @@ app.post('/api/verify', async (req, res) => {
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
+});
+
+// Test endpoint to check database connection and list passwords
+app.get('/api/test', async (req, res) => {
+  try {
+    const passwords = await Password.find({});
+    res.json({
+      status: 'success',
+      connection: 'MongoDB connected',
+      passwordCount: passwords.length,
+      passwords: passwords
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      message: error.message
+    });
+  }
 });
 
 // Start server
